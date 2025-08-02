@@ -1,13 +1,16 @@
 package game;
 import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import board.Board;
-
+import player.*;
 
 public class Game {
     private final Board board;
     private char userSymbol = 'X';
-    private boolean userTurn = true;
+    private boolean nextTurn = true;
+    private Player player1;
+    private Player player2;
 
     public Game() {
         Scanner sc = new Scanner(System.in);
@@ -38,7 +41,9 @@ public class Game {
         }
 
         board = (input.isEmpty()) ? new Board() : new Board(input.replace('_', ' '));
-        if (winner()) {
+        playerSetup();
+
+        if (isWin()) {
             board.display();
             return;
         }
@@ -67,16 +72,68 @@ public class Game {
         return true;
     }
 
-    private void populate(int x, int y) {
+    private void clearScanner(Scanner sc) {
+        while (sc.hasNext()) {
+            sc.next();
+        }
+    }
+
+    private void playerSetup() {
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            try {
+                System.out.print("Input command: ");
+                String start = sc.next().toUpperCase();
+                String p1 = sc.next().toUpperCase();
+                String p2 = sc.next().toUpperCase();
+
+                if (!start.equals("START")) {
+                    System.out.println("Invalid argument: First argument must be START");
+                    clearScanner(sc);
+                    continue;
+                }
+
+                switch (p1) {
+                    case "USER":
+                        player1 = new Human(this);
+                        break;
+                    case "EASY":
+                        player1 = new EasyBot(this, board);
+                        break;
+                    default:
+                        System.out.println("Invalid argument: Second argument be be USER | BOT DIFF");
+                        clearScanner(sc);
+                        continue;
+                }
+
+                switch (p2) {
+                    case "USER":
+                        player2 = new Human(this);
+                        return;
+                    case "EASY":
+                        player2 = new EasyBot(this, board);
+                        return;
+                    default:
+                        System.out.println("Invalid argument: Second argument be be USER | BOT DIFF");
+                        clearScanner(sc);
+                }
+
+            } catch (NoSuchElementException e) {
+                System.out.println("Please enter: START (USER | BOT DIFF) (USER | BOT DIFF)");
+            }
+        }
+    }
+
+    public void populate(int x, int y) {
         if (board.at(x, y) != ' ') {
             throw new IllegalStateException("This cell is occupied! Choose another one!");
         }
 
-        board.populate(x, y, userTurn ? userSymbol : ((userSymbol == 'X') ? 'O' : 'X'));
-        userTurn = !userTurn;
+        board.populate(x, y, nextTurn ? userSymbol : ((userSymbol == 'X') ? 'O' : 'X'));
     }
 
-    private boolean winner() {
+    private boolean isWin() {
         for (int i = 0; i < 3; ++i) {
             // row check
             if ((board.at(i, 0) == board.at(i, 1)) && (board.at(i, 1) == board.at(i, 2))) {
@@ -94,7 +151,7 @@ public class Game {
             }
         }
 
-        // vertical check top-left -> bottom-right
+        // diagonal check top-left -> bottom-right
         if ((board.at(0, 0) == board.at(1, 1)) && (board.at(1, 1) == board.at(2, 2))) {
             if (board.at(0, 0) != ' ') {
                 System.out.println(board.at(0, 0) + " wins");
@@ -102,7 +159,7 @@ public class Game {
             }
         }
 
-        // vertical check bottom-left -> top-right
+        // diagonal check bottom-left -> top-right
         if ((board.at(2, 0) == board.at(1, 1)) && (board.at(1, 1) == board.at(0, 2))) {
             if (board.at(2, 0) != ' ') {
                 System.out.println(board.at(2, 0) + " wins");
@@ -113,31 +170,45 @@ public class Game {
         return false;
     }
 
+    private boolean isDraw() {
+        if (board.isFull()) {
+            System.out.println("Draw");
+            return true;
+    }
+
+    return false;
+    }
+
     public void play() {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
             try {
                 board.display();
-                System.out.println("Enter the coordinates: ");
-                final int x = sc.nextInt();
-                final int y = sc.nextInt();
-                populate(x-1, y-1);
-
+                int[] coords = player1.makeMove();
+                player2.userMove(coords);
+                nextTurn = !nextTurn;
             } catch (IllegalArgumentException | IllegalStateException e) {
                 System.out.println(e.getMessage());
                 continue;
             } catch (InputMismatchException e) {
                 System.out.println("You should enter numbers!");
+                sc.nextLine();
                 continue;
             }
 
             board.display();
 
-            if (winner()) {
+            if (isWin() || isDraw()) {
                 break;
-            } else if (board.isFull()) {
-                System.out.println("Draw");
+            }
+
+            int[] coords = player2.makeMove();
+            player1.userMove(coords);
+            nextTurn = !nextTurn;
+            board.display();
+
+            if (isWin() || isDraw()) {
                 break;
             }
         }
@@ -146,6 +217,6 @@ public class Game {
     }
 
     public static void main(String[] args) {
-        Game game = new Game();
+        new Game();
     }
 }

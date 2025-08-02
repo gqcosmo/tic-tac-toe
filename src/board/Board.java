@@ -2,8 +2,8 @@ package board;
 import java.util.ArrayList;
 
 public class Board {
-    private static int N = 3;
-    private char[][] board;
+    private static final int N = 3;
+    private final char[][] board;
     private int cellsRemaining = N*N;
 
     public Board() {
@@ -19,12 +19,12 @@ public class Board {
         board = new char[N][N];
 
         if (data.length() != N*N) {
-            throw new IllegalArgumentException("Invalid argument: data must be on length 9");
+            throw new IllegalArgumentException("Invalid argument: data must be of length 9");
         }
 
         for (int i = 0; i < N*N; ++i) {
             char ch = data.charAt(i);
-            board[i / 3][i % 3] = ch;
+            board[i / N][i % N] = ch;
             if (ch != ' ') {
                 --cellsRemaining;
             }
