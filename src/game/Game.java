@@ -122,7 +122,7 @@ public class Game {
                         player1 = new EasyBot(this, board, p1Symbol);
                         break;
                     default:
-                        System.out.println("Invalid argument: first argument be be USER | BOT DIFF");
+                        System.out.println("Invalid argument: second argument must be USER | BOT DIFF");
                         clearScanner(sc);
                         continue;
                 }
@@ -135,7 +135,7 @@ public class Game {
                         player2 = new EasyBot(this, board, p2Symbol);
                         return;
                     default:
-                        System.out.println("Invalid argument: Second argument be be USER | BOT DIFF");
+                        System.out.println("Invalid argument: third argument must be USER | BOT DIFF");
                         clearScanner(sc);
                 }
             } catch (NoSuchElementException e) {
