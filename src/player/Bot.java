@@ -12,6 +12,7 @@ public abstract class Bot extends Player {
     }
 
     /* remove users move from the list */
+    @Override
     public void userMove(int[] coords) {
         int x = coords[0];
         int y = coords[1];

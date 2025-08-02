@@ -7,6 +7,7 @@ public class Human extends Player {
         super(game, symbol);
     }
 
+    @Override
     public int[] makeMove() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter the coordinates: ");

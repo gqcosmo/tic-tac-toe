@@ -23,13 +23,22 @@ public class Game {
         } while (input.length() != 9 || !validInput(input));
 
         board = (input.isEmpty()) ? new Board() : new Board(input.replace('_', ' '));
-        playerSetup();
 
         if (isWin()) {
             board.display();
             return;
         }
+
+        playerSetup();
         play();
+    }
+
+    public void populate(int x, int y, char symbol) {
+        if (board.at(x, y) != ' ') {
+            throw new IllegalStateException("This cell is occupied! Choose another one!");
+        }
+
+        board.populate(x, y, symbol);
     }
 
     private static boolean validInput(String input) {
@@ -107,14 +116,6 @@ public class Game {
         }
     }
 
-    public void populate(int x, int y, char symbol) {
-        if (board.at(x, y) != ' ') {
-            throw new IllegalStateException("This cell is occupied! Choose another one!");
-        }
-
-        board.populate(x, y, symbol);
-    }
-
     private boolean isWin() {
         for (int i = 0; i < 3; ++i) {
             // row check
@@ -161,33 +162,33 @@ public class Game {
     return false;
     }
 
+    private void handleTurn(Player turn, Player waiting, Scanner sc) {
+        while (true) {
+            try {
+                board.display();
+                int[] coords = turn.makeMove();
+                waiting.userMove(coords);
+                board.display();
+                return;
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                System.out.println(e.getMessage());
+            } catch (InputMismatchException e) {
+                System.out.println("You should enter numbers!");
+                sc.nextLine();
+            }
+        }
+    }
+
     public void play() {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
-            try {
-                board.display();
-                int[] coords = player1.makeMove();
-                player2.userMove(coords);
-            } catch (IllegalArgumentException | IllegalStateException e) {
-                System.out.println(e.getMessage());
-                continue;
-            } catch (InputMismatchException e) {
-                System.out.println("You should enter numbers!");
-                sc.nextLine();
-                continue;
-            }
-
-            board.display();
-
+            handleTurn(player1, player2, sc);
             if (isWin() || isDraw()) {
                 break;
             }
 
-            int[] coords = player2.makeMove();
-            player1.userMove(coords);
-            board.display();
-
+            handleTurn(player2, player1, sc);
             if (isWin() || isDraw()) {
                 break;
             }
