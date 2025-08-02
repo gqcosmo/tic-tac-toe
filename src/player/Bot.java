@@ -6,8 +6,8 @@ import board.Board;
 public abstract class Bot extends Player {
     ArrayList<int[]> avail;
 
-    public Bot(Game game, Board board) {
-        super(game);
+    public Bot(Game game, Board board, char symbol) {
+        super(game, symbol);
         avail = board.availableCoords();
     }
 

@@ -7,8 +7,6 @@ import player.*;
 
 public class Game {
     private final Board board;
-    private char userSymbol = 'X';
-    private boolean nextTurn = true;
     private Player player1;
     private Player player2;
 
@@ -23,22 +21,6 @@ public class Game {
                 break;
             }
         } while (input.length() != 9 || !validInput(input));
-
-        // determine starting symbol
-        int countX = 0;
-        for (int i = 0; i < input.length(); ++i) {
-            char ch = input.charAt(i);
-
-            if (ch == 'X') {
-                ++countX;
-            } else if (ch == 'O') {
-                --countX;
-            }
-        }
-
-        if (countX > 0) {
-            userSymbol = 'O';
-        }
 
         board = (input.isEmpty()) ? new Board() : new Board(input.replace('_', ' '));
         playerSetup();
@@ -96,10 +78,10 @@ public class Game {
 
                 switch (p1) {
                     case "USER":
-                        player1 = new Human(this);
+                        player1 = new Human(this, 'X');
                         break;
                     case "EASY":
-                        player1 = new EasyBot(this, board);
+                        player1 = new EasyBot(this, board, 'X');
                         break;
                     default:
                         System.out.println("Invalid argument: Second argument be be USER | BOT DIFF");
@@ -109,10 +91,10 @@ public class Game {
 
                 switch (p2) {
                     case "USER":
-                        player2 = new Human(this);
+                        player2 = new Human(this, 'O');
                         return;
                     case "EASY":
-                        player2 = new EasyBot(this, board);
+                        player2 = new EasyBot(this, board, 'O');
                         return;
                     default:
                         System.out.println("Invalid argument: Second argument be be USER | BOT DIFF");
@@ -125,12 +107,12 @@ public class Game {
         }
     }
 
-    public void populate(int x, int y) {
+    public void populate(int x, int y, char symbol) {
         if (board.at(x, y) != ' ') {
             throw new IllegalStateException("This cell is occupied! Choose another one!");
         }
 
-        board.populate(x, y, nextTurn ? userSymbol : ((userSymbol == 'X') ? 'O' : 'X'));
+        board.populate(x, y, symbol);
     }
 
     private boolean isWin() {
@@ -187,7 +169,6 @@ public class Game {
                 board.display();
                 int[] coords = player1.makeMove();
                 player2.userMove(coords);
-                nextTurn = !nextTurn;
             } catch (IllegalArgumentException | IllegalStateException e) {
                 System.out.println(e.getMessage());
                 continue;
@@ -205,7 +186,6 @@ public class Game {
 
             int[] coords = player2.makeMove();
             player1.userMove(coords);
-            nextTurn = !nextTurn;
             board.display();
 
             if (isWin() || isDraw()) {

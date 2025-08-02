@@ -3,8 +3,8 @@ import game.Game;
 import java.util.Scanner;
 
 public class Human extends Player {
-    public Human(Game game) {
-        super(game);
+    public Human(Game game, char symbol) {
+        super(game, symbol);
     }
 
     public int[] makeMove() {
@@ -12,7 +12,7 @@ public class Human extends Player {
         System.out.println("Enter the coordinates: ");
             int x = sc.nextInt();
             int y = sc.nextInt();
-            game.populate(x-1, y-1);
+            game.populate(x-1, y-1, symbol);
             return new int[]{x, y};
     }
 }
