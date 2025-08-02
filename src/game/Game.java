@@ -29,7 +29,16 @@ public class Game {
             return;
         }
 
-        playerSetup();
+        int countX = 0;
+        for (int i = 0; i < input.length(); ++i) {
+            char ch = input.charAt(i);
+            if (ch == 'X') {
+                ++countX;
+            } else if (ch == 'O') {
+                --countX;
+            }
+        }
+        playerSetup(countX);
         play();
     }
 
@@ -87,7 +96,10 @@ public class Game {
         }
     }
 
-    private void playerSetup() {
+    private void playerSetup(int countX) {
+        char p1Symbol = countX > 0 ? 'O' : 'X';
+        char p2Symbol = countX > 0 ? 'X' : 'O';
+
         Scanner sc = new Scanner(System.in);
 
         while (true) {
@@ -105,10 +117,10 @@ public class Game {
 
                 switch (p1) {
                     case "USER":
-                        player1 = new Human(this, 'X');
+                        player1 = new Human(this, p1Symbol);
                         break;
                     case "EASY":
-                        player1 = new EasyBot(this, board, 'X');
+                        player1 = new EasyBot(this, board, p1Symbol);
                         break;
                     default:
                         System.out.println("Invalid argument: Second argument be be USER | BOT DIFF");
@@ -118,10 +130,10 @@ public class Game {
 
                 switch (p2) {
                     case "USER":
-                        player2 = new Human(this, 'O');
+                        player2 = new Human(this, p2Symbol);
                         return;
                     case "EASY":
-                        player2 = new EasyBot(this, board, 'O');
+                        player2 = new EasyBot(this, board, p2Symbol);
                         return;
                     default:
                         System.out.println("Invalid argument: Second argument be be USER | BOT DIFF");
