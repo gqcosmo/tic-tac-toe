@@ -38,6 +38,7 @@ public class Game {
                 --countX;
             }
         }
+
         playerSetup(countX);
         play();
     }
@@ -91,9 +92,7 @@ public class Game {
     }
 
     private void clearScanner(Scanner sc) {
-        while (sc.hasNext()) {
-            sc.next();
-        }
+        sc.nextLine();
     }
 
     private void playerSetup(int countX) {
@@ -123,7 +122,7 @@ public class Game {
                         player1 = new EasyBot(this, board, p1Symbol);
                         break;
                     default:
-                        System.out.println("Invalid argument: Second argument be be USER | BOT DIFF");
+                        System.out.println("Invalid argument: first argument be be USER | BOT DIFF");
                         clearScanner(sc);
                         continue;
                 }
@@ -139,7 +138,6 @@ public class Game {
                         System.out.println("Invalid argument: Second argument be be USER | BOT DIFF");
                         clearScanner(sc);
                 }
-
             } catch (NoSuchElementException e) {
                 System.out.println("Please enter: START (USER | BOT DIFF) (USER | BOT DIFF)");
             }
