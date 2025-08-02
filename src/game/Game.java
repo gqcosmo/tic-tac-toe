@@ -23,9 +23,9 @@ public class Game {
         } while (input.length() != 9 || !validInput(input));
 
         board = (input.isEmpty()) ? new Board() : new Board(input.replace('_', ' '));
+        board.display();
 
         if (isWin()) {
-            board.display();
             return;
         }
 
@@ -39,6 +39,24 @@ public class Game {
         }
 
         board.populate(x, y, symbol);
+    }
+
+    public void play() {
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            handleTurn(player1, player2, sc);
+            if (isWin() || isDraw()) {
+                break;
+            }
+
+            handleTurn(player2, player1, sc);
+            if (isWin() || isDraw()) {
+                break;
+            }
+        }
+
+        sc.close();
     }
 
     private static boolean validInput(String input) {
@@ -165,7 +183,6 @@ public class Game {
     private void handleTurn(Player turn, Player waiting, Scanner sc) {
         while (true) {
             try {
-                board.display();
                 int[] coords = turn.makeMove();
                 waiting.userMove(coords);
                 board.display();
@@ -177,24 +194,6 @@ public class Game {
                 sc.nextLine();
             }
         }
-    }
-
-    public void play() {
-        Scanner sc = new Scanner(System.in);
-
-        while (true) {
-            handleTurn(player1, player2, sc);
-            if (isWin() || isDraw()) {
-                break;
-            }
-
-            handleTurn(player2, player1, sc);
-            if (isWin() || isDraw()) {
-                break;
-            }
-        }
-
-        sc.close();
     }
 
     public static void main(String[] args) {
