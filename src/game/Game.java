@@ -44,7 +44,7 @@ public class Game {
     }
 
     public void populate(int x, int y, char symbol) {
-        if (board.at(x, y) != ' ') {
+        if (board.at(x, y) != ' ' && symbol != ' ') {
             throw new IllegalStateException("This cell is occupied! Choose another one!");
         }
 
@@ -55,13 +55,11 @@ public class Game {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
-            handleTurn(player1, player2, sc);
-            if (isWin() || isDraw()) {
+
+            if (!handleTurn(player1, player2, sc)) {
                 break;
             }
-
-            handleTurn(player2, player1, sc);
-            if (isWin() || isDraw()) {
+            if (!handleTurn(player2, player1, sc)) {
                 break;
             }
         }
@@ -121,6 +119,9 @@ public class Game {
                     case "EASY":
                         player1 = new EasyBot(this, board, p1Symbol);
                         break;
+                    case "MEDIUM":
+                        player1 = new MediumBot(this, board, p1Symbol);
+                        break;
                     default:
                         System.out.println("Invalid argument: second argument must be USER | BOT DIFF");
                         clearScanner(sc);
@@ -134,6 +135,9 @@ public class Game {
                     case "EASY":
                         player2 = new EasyBot(this, board, p2Symbol);
                         return;
+                    case "MEDIUM":
+                        player2 = new MediumBot(this, board, p2Symbol);
+                        return;
                     default:
                         System.out.println("Invalid argument: third argument must be USER | BOT DIFF");
                         clearScanner(sc);
@@ -144,19 +148,17 @@ public class Game {
         }
     }
 
-    private boolean isWin() {
+    public boolean isWin() {
         for (int i = 0; i < 3; ++i) {
             // row check
             if ((board.at(i, 0) == board.at(i, 1)) && (board.at(i, 1) == board.at(i, 2))) {
                 if (board.at(i, 0) != ' ') {
-                    System.out.println(board.at(i, 0) + " wins");
                     return true;
                 }
             }
             // col check
             if ((board.at(0, i) == board.at(1, i)) && (board.at(1, i) == board.at(2, i))) {
                 if (board.at(0, i) != ' ') {
-                    System.out.println(board.at(0, i) + " wins");
                     return true;
                 }
             }
@@ -165,7 +167,6 @@ public class Game {
         // diagonal check top-left -> bottom-right
         if ((board.at(0, 0) == board.at(1, 1)) && (board.at(1, 1) == board.at(2, 2))) {
             if (board.at(0, 0) != ' ') {
-                System.out.println(board.at(0, 0) + " wins");
                 return true;
             }
         }
@@ -173,7 +174,6 @@ public class Game {
         // diagonal check bottom-left -> top-right
         if ((board.at(2, 0) == board.at(1, 1)) && (board.at(1, 1) == board.at(0, 2))) {
             if (board.at(2, 0) != ' ') {
-                System.out.println(board.at(2, 0) + " wins");
                 return true;
             }
         }
@@ -181,7 +181,7 @@ public class Game {
         return false;
     }
 
-    private boolean isDraw() {
+    public boolean isDraw() {
         if (board.isFull()) {
             System.out.println("Draw");
             return true;
@@ -190,13 +190,27 @@ public class Game {
     return false;
     }
 
-    private void handleTurn(Player turn, Player waiting, Scanner sc) {
+    /*
+    returns true if game has ended, otherwise false
+     */
+    private boolean handleTurn(Player turn, Player waiting, Scanner sc) {
         while (true) {
             try {
                 int[] coords = turn.makeMove();
                 waiting.userMove(coords);
                 board.display();
-                return;
+
+                if (isWin()) {
+                    System.out.println(turn.getSymbol() + " wins");
+                    return false;
+                }
+                if (isDraw()) {
+                    System.out.println("Draw");
+                    return false;
+                }
+
+                return true;
+
             } catch (IllegalArgumentException | IllegalStateException e) {
                 System.out.println(e.getMessage());
             } catch (InputMismatchException e) {

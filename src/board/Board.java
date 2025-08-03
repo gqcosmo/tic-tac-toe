@@ -34,7 +34,8 @@ public class Board {
     public void populate(int x, int y, char ch) {
         validateCoords(x, y);
         board[x][y] = ch;
-        --cellsRemaining;
+
+        cellsRemaining = (ch == ' ') ? ++cellsRemaining : --cellsRemaining;
     }
 
     public char at(int x, int y) {

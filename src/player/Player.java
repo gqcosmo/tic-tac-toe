@@ -10,6 +10,7 @@ public abstract class Player {
         this.symbol = symbol;
     }
 
+    public char getSymbol() { return symbol; }
     public int[] makeMove() { return new int[]{}; }
 
     public void userMove(int[] coords) {}

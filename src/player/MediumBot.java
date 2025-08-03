@@ -9,13 +9,40 @@ public class MediumBot extends Bot {
 
     @Override
     public int[] makeMove() {
-        /*
-        Winning move: If the AI has two in a row and can win with one more move, it takes that move.
-        Blocking move: If the opponent has two in a row and can win with one more move, the AI blocks it.
-        Fallback move: If neither of the above applies, the AI makes a random move.
-         */
-        for (int i = 0; i < 3; i++) {
-            // need to check if 2 out of any of the 3 spots are taken by same symbol
+        // check if can make winning-cell
+        for (int i = 0; i < 9; ++i) {
+            int x = i / 3;
+            int y = i % 3;
+
+            if (board.at(x, y) == ' ') {
+                game.populate(x, y, symbol);
+                if (game.isWin()) {
+                    return new int[]{x, y};
+                }
+
+                game.populate(x, y, ' ');
+            }
         }
+
+        // check if can block winning-cell
+        for (int i = 0; i < 9; ++i) {
+            int x = i / 3;
+            int y = i % 3;
+
+            if (board.at(x, y) == ' ') {
+                game.populate(x, y, symbol == 'X' ? 'O' : 'X');
+                if (game.isWin()) {
+                    game.populate(x, y, ' ');
+                    game.populate(x, y, symbol);
+                    return new int[]{x, y};
+                }
+
+                game.populate(x, y, ' ');
+            }
+        }
+
+        int[] coords = avail.removeLast();
+        game.populate(coords[0], coords[1], symbol);
+        return coords;
     }
 }
