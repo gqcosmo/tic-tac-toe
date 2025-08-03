@@ -1,12 +1,10 @@
 package player;
-import java.util.Collections;
 import game.Game;
 import board.Board;
 
 public class EasyBot extends Bot {
     public EasyBot(Game game, Board board, char symbol) {
         super(game, board, symbol);
-        Collections.shuffle(avail);
     }
 
     @Override
