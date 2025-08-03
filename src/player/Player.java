@@ -13,5 +13,8 @@ public abstract class Player {
     public char getSymbol() { return symbol; }
     public int[] makeMove() { return new int[]{}; }
 
-    public void userMove(int[] coords) {}
+    /*
+    @param coords: {x, y} of the move opponent made
+     */
+    public void opponentMove(int[] coords) {}
 }

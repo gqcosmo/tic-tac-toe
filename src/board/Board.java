@@ -19,7 +19,7 @@ public class Board {
         board = new char[N][N];
 
         if (data.length() != N*N) {
-            throw new IllegalArgumentException("Invalid argument: data must be of length 9");
+            throw new IllegalArgumentException("Invalid argument: argument must be of length 9");
         }
 
         for (int i = 0; i < N*N; ++i) {

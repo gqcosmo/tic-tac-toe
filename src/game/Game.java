@@ -29,6 +29,7 @@ public class Game {
             return;
         }
 
+        // determine which symbol to give to p1 and p2
         int countX = 0;
         for (int i = 0; i < input.length(); ++i) {
             char ch = input.charAt(i);
@@ -55,7 +56,6 @@ public class Game {
         Scanner sc = new Scanner(System.in);
 
         while (true) {
-
             if (!handleTurn(player1, player2, sc)) {
                 break;
             }
@@ -67,6 +67,9 @@ public class Game {
         sc.close();
     }
 
+    /*
+    validate that the given input contains only valid symbols for the start state
+     */
     private static boolean validInput(String input) {
         char[] symbols = new char[]{'X', 'O', '_'};
 
@@ -193,15 +196,15 @@ public class Game {
     /*
     returns true if game has ended, otherwise false
      */
-    private boolean handleTurn(Player turn, Player waiting, Scanner sc) {
+    private boolean handleTurn(Player playing, Player waiting, Scanner sc) {
         while (true) {
             try {
-                int[] coords = turn.makeMove();
-                waiting.userMove(coords);
+                int[] coords = playing.makeMove();
+                waiting.opponentMove(coords);
                 board.display();
 
                 if (isWin()) {
-                    System.out.println(turn.getSymbol() + " wins");
+                    System.out.println(playing.getSymbol() + " wins");
                     return false;
                 }
                 if (isDraw()) {
