@@ -2,8 +2,8 @@ package board;
 import java.util.ArrayList;
 
 public class Board {
-    private static final int N = 3;
     private final char[][] board;
+    private static final int N = 3;
     private int cellsRemaining = N*N;
 
     public Board() {
@@ -13,6 +13,11 @@ public class Board {
                 board[i][j] = ' ';
             }
         }
+    }
+
+    public Board(Board other) {
+        board = other.board;
+        cellsRemaining = other.cellsRemaining;
     }
 
     public Board(String data) {

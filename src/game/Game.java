@@ -44,6 +44,12 @@ public class Game {
         play();
     }
 
+    public Game(Board board, Player player) {
+        this.board = new Board(board);
+        player1 = player;
+        player2 = null;
+    }
+
     public void populate(int x, int y, char symbol) {
         if (board.at(x, y) != ' ' && symbol != ' ') {
             throw new IllegalStateException("This cell is occupied! Choose another one!");
@@ -65,6 +71,10 @@ public class Game {
         }
 
         sc.close();
+    }
+
+    public Board getBoard() {
+        return board;
     }
 
     /*
