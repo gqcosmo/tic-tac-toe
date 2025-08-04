@@ -186,7 +186,6 @@ public class Game {
 
     public boolean isDraw() {
         if (board.isFull()) {
-            System.out.println("Draw");
             return true;
     }
 

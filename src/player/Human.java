@@ -16,4 +16,7 @@ public class Human extends Player {
             game.populate(x-1, y-1, symbol);
             return new int[]{x, y};
     }
+
+    @Override
+    public void opponentMove(int[] coords) {};
 }

@@ -11,10 +11,10 @@ public abstract class Player {
     }
 
     public char getSymbol() { return symbol; }
-    public int[] makeMove() { return new int[]{}; }
+    public abstract int[] makeMove();
 
     /*
     @param coords: {x, y} of the move opponent made
      */
-    public void opponentMove(int[] coords) {}
+    public abstract void opponentMove(int[] coords);
 }
