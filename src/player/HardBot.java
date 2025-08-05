@@ -10,29 +10,50 @@ public class HardBot extends Bot {
 
     @Override
     public int[] makeMove() {
-        int bestVal = (symbol == 'X') ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-        int[] bestCoords = avail.getLast();
+        int bestVal = Integer.MIN_VALUE;
+        int[] bestCoords = null;
 
         for (int[] coords : board.availableCoords()) {
-            Game state = new Game(board, this);
+            Game state = new Game(board);
             state.populate(coords[0], coords[1], symbol);
-            int currVal = minimax(state, coords, false);
+            int currVal = minimax(state, symbol == 'X' ? 'O' : 'X');
 
-            // add if conditions for symbols
+            if (currVal > bestVal || bestCoords == null) {
+                bestVal = currVal;
+                bestCoords = coords;
+            }
         }
 
+        game.populate(bestCoords[0], bestCoords[1], symbol);
         opponentMove(bestCoords);
         return bestCoords;
     }
 
-    private int minimax(Game state, int[] coords, boolean playerTurn) {
+    private int minimax(Game state, char playingSymbol) {
         if (state.isDraw()) {
             return 0;
-        } else if (state.isWin()) {
-            return (symbol == 'X') ? 1 : -1;
         }
 
-        // iterate through all available coords, skipping argument coords and place next move
+        char winner = state.getWinner();
+        if (winner != ' ') {
+            return (winner == symbol) ?  1 : -1;
+        }
 
+        int bestScore = (playingSymbol == symbol) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+
+        for (int[] coords : state.getBoard().availableCoords()) {
+            Game nextState = new Game(state.getBoard());
+            nextState.populate(coords[0], coords[1], playingSymbol);
+            int currScore = minimax(nextState, (playingSymbol == 'X') ? 'O' : 'X');
+
+            // assume each player makes the most optimal move
+            if (playingSymbol == symbol) {
+                bestScore = Math.max(bestScore, currScore);
+            } else {
+                bestScore = Math.min(bestScore, currScore);
+            }
+        }
+
+        return bestScore;
     }
 }

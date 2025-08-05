@@ -25,7 +25,8 @@ public class Game {
         board = (input.isEmpty()) ? new Board() : new Board(input.replace('_', ' '));
         board.display();
 
-        if (isWin()) {
+        if (getWinner() != ' ') {
+            System.out.println(getWinner() + " wins");
             return;
         }
 
@@ -44,9 +45,9 @@ public class Game {
         play();
     }
 
-    public Game(Board board, Player player) {
+    public Game(Board board) {
         this.board = new Board(board);
-        player1 = player;
+        player1 = null;
         player2 = null;
     }
 
@@ -115,15 +116,8 @@ public class Game {
         while (true) {
             try {
                 System.out.print("Input command: ");
-                String start = sc.next().toUpperCase();
                 String p1 = sc.next().toUpperCase();
                 String p2 = sc.next().toUpperCase();
-
-                if (!start.equals("START")) {
-                    System.out.println("Invalid argument: First argument must be START");
-                    clearScanner(sc);
-                    continue;
-                }
 
                 switch (p1) {
                     case "USER":
@@ -135,8 +129,11 @@ public class Game {
                     case "MEDIUM":
                         player1 = new MediumBot(this, board, p1Symbol);
                         break;
+                    case "HARD":
+                        player1 = new HardBot(this, board, p1Symbol);
+                        break;
                     default:
-                        System.out.println("Invalid argument: second argument must be USER | BOT DIFF");
+                        System.out.println("Invalid argument: first argument must be USER | BOT DIFF");
                         clearScanner(sc);
                         continue;
                 }
@@ -151,28 +148,31 @@ public class Game {
                     case "MEDIUM":
                         player2 = new MediumBot(this, board, p2Symbol);
                         return;
+                    case "HARD":
+                        player2 = new HardBot(this, board, p2Symbol);
+                        return;
                     default:
-                        System.out.println("Invalid argument: third argument must be USER | BOT DIFF");
+                        System.out.println("Invalid argument: second argument must be USER | BOT DIFF");
                         clearScanner(sc);
                 }
             } catch (NoSuchElementException e) {
-                System.out.println("Please enter: START (USER | BOT DIFF) (USER | BOT DIFF)");
+                System.out.println("Please enter: (USER | BOT DIFF) (USER | BOT DIFF)");
             }
         }
     }
 
-    public boolean isWin() {
+    public char getWinner() {
         for (int i = 0; i < 3; ++i) {
             // row check
             if ((board.at(i, 0) == board.at(i, 1)) && (board.at(i, 1) == board.at(i, 2))) {
                 if (board.at(i, 0) != ' ') {
-                    return true;
+                    return board.at(i, 0);
                 }
             }
             // col check
             if ((board.at(0, i) == board.at(1, i)) && (board.at(1, i) == board.at(2, i))) {
                 if (board.at(0, i) != ' ') {
-                    return true;
+                    return board.at(0, i);
                 }
             }
         }
@@ -180,26 +180,22 @@ public class Game {
         // diagonal check top-left -> bottom-right
         if ((board.at(0, 0) == board.at(1, 1)) && (board.at(1, 1) == board.at(2, 2))) {
             if (board.at(0, 0) != ' ') {
-                return true;
+                return board.at(0, 0);
             }
         }
 
         // diagonal check bottom-left -> top-right
         if ((board.at(2, 0) == board.at(1, 1)) && (board.at(1, 1) == board.at(0, 2))) {
             if (board.at(2, 0) != ' ') {
-                return true;
+                return board.at(2, 0);
             }
         }
 
-        return false;
+        return ' ';
     }
 
     public boolean isDraw() {
-        if (board.isFull()) {
-            return true;
-    }
-
-    return false;
+        return board.isFull() && getWinner() == ' ';
     }
 
     /*
@@ -212,8 +208,9 @@ public class Game {
                 waiting.opponentMove(coords);
                 board.display();
 
-                if (isWin()) {
-                    System.out.println(playing.getSymbol() + " wins");
+                char winner = getWinner();
+                if (winner != ' ') {
+                    System.out.println(winner + " wins");
                     return false;
                 }
                 if (isDraw()) {

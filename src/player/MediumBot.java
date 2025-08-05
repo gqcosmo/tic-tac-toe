@@ -16,7 +16,7 @@ public class MediumBot extends Bot {
 
             if (board.at(x, y) == ' ') {
                 game.populate(x, y, symbol);
-                if (game.isWin()) {
+                if (game.getWinner() != ' ') {
                     int[] coords = new int[]{x, y};
                     opponentMove(coords); // remove placement from available cells
                     return coords;
@@ -33,7 +33,7 @@ public class MediumBot extends Bot {
 
             if (board.at(x, y) == ' ') {
                 game.populate(x, y, symbol == 'X' ? 'O' : 'X');
-                if (game.isWin()) {
+                if (game.getWinner() != ' ') {
                     game.populate(x, y, ' ');
                     game.populate(x, y, symbol);
                     int[] coords = new int[]{x, y};

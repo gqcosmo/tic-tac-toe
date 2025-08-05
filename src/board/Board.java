@@ -2,7 +2,7 @@ package board;
 import java.util.ArrayList;
 
 public class Board {
-    private final char[][] board;
+    private char[][] board = new char[N][N];
     private static final int N = 3;
     private int cellsRemaining = N*N;
 
@@ -16,7 +16,9 @@ public class Board {
     }
 
     public Board(Board other) {
-        board = other.board;
+        for (int i = 0; i < N; ++i) {
+            System.arraycopy(other.board[i], 0, board[i], 0, N);
+        }
         cellsRemaining = other.cellsRemaining;
     }
 
